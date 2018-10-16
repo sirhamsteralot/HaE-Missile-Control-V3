@@ -19,11 +19,27 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
+        EntityTracking_Module targetTracker;
+        ControlModule controlModule;
+        ProNav proNav;
+
+        IMyShipController control;
+        IMyTimerBlock trigger;
 
 
         public Program()
         {
+            GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
+            control = GridTerminalSystem.GetBlockWithName("Control") as IMyShipController;
+            trigger = GridTerminalSystem.GetBlockWithName("Trigger") as IMyTimerBlock;
 
+            targetTracker = new EntityTracking_Module(GTS, control, null);
+            targetTracker.onEntityDetected += OnTargetFound;
+
+            controlModule = new ControlModule(GTS, control);
+            proNav = new ProNav(control, 30);
+
+            Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
 
         public void Save()
@@ -33,7 +49,23 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            targetTracker.Poll();
+        }
 
+        public void OnTargetFound(HaE_Entity target)
+        {
+            if (target.trackingType != HaE_Entity.TrackingType.Turret)
+                return;
+
+            Vector3D reqDir = proNav.Navigate(target);
+            double reqMag = reqDir.Normalize();
+
+            Echo($"correction: {reqMag}");
+
+            controlModule.AimMissile(reqDir);
+
+            controlModule.ApplyThrust(1f);
+            trigger?.Trigger();
         }
     }
 }
