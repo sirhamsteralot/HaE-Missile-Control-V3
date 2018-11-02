@@ -55,8 +55,13 @@ namespace IngameScript
                 Vector3D RdR = rangeVec * rangeVec;
                 Vector3D rotVec = RxV / RdR;
 
+                Vector3D Los = Vector3D.Normalize(rangeVec);
+
                 // Pronav term
-                return (NavGain * closingVelocity).Cross(rotVec);
+                Vector3D accelerationNormal = (NavGain * closingVelocity).Cross(rotVec);
+                accelerationNormal += -controller.GetNaturalGravity();                              //Gravity term
+                accelerationNormal += Los;                                                          //LosBias term
+                return accelerationNormal;
             }
         }
     }
