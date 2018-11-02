@@ -45,7 +45,7 @@ namespace IngameScript
 
                 Vector3D accel = CalculateAccel(rangeVec, closingVel);
 
-                return Vector3D.Lerp(accel, controller.WorldMatrix.Forward, 0.25);
+                return accel;
             }
 
             private Vector3D CalculateAccel(Vector3D rangeVec, Vector3D closingVelocity)

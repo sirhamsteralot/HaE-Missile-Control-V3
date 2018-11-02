@@ -60,11 +60,9 @@ namespace IngameScript
             Vector3D reqDir = proNav.Navigate(target);
             double reqMag = reqDir.Normalize();
 
-            Echo($"correction: {reqMag}");
-
             controlModule.AimMissile(reqDir);
 
-            controlModule.ApplyThrust(1f);
+            controlModule.ApplyThrust(reqDir);
             trigger?.Trigger();
         }
     }

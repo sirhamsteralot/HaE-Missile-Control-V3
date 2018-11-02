@@ -38,12 +38,9 @@ namespace IngameScript
                 GyroUtils.PointInDirection(gyros, control, targetDir);
             }
 
-            public void ApplyThrust(float amount)
+            public void ApplyThrust(Vector3D dir)
             {
-                foreach(var thruster in thrusters)
-                {
-                    thruster.ThrustOverridePercentage = amount;
-                }
+                ThrustUtils.SetThrustBasedDot(thrusters, dir);
             }
         }
     }
