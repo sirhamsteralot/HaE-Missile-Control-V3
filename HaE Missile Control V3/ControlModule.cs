@@ -35,7 +35,7 @@ namespace IngameScript
 
             public void AimMissile(Vector3D targetDir)
             {
-                GyroUtils.PointInDirection(gyros, control, targetDir);
+                GyroUtils.PointInDirection(gyros, control, targetDir, 1, true);
             }
 
             public void ApplyThrust(Vector3D dir)

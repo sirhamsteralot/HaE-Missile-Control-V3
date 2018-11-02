@@ -22,22 +22,29 @@ namespace IngameScript
         EntityTracking_Module targetTracker;
         ControlModule controlModule;
         ProNav proNav;
+        CommsHandler commsHandler;
 
         IMyShipController control;
         IMyTimerBlock trigger;
 
+        CurrentStatus status;
+
 
         public Program()
         {
+            commsHandler = new CommsHandler(this);
+
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
-            control = GridTerminalSystem.GetBlockWithName("Control") as IMyShipController;
-            trigger = GridTerminalSystem.GetBlockWithName("Trigger") as IMyTimerBlock;
+            control = GTS.GetBlockWithNameOnGrid("Control") as IMyShipController;
+            trigger = GTS.GetBlockWithNameOnGrid("Trigger") as IMyTimerBlock;
 
             targetTracker = new EntityTracking_Module(GTS, control, null);
             targetTracker.onEntityDetected += OnTargetFound;
 
             controlModule = new ControlModule(GTS, control);
             proNav = new ProNav(control, 30);
+
+            status = CurrentStatus.Idle;
 
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
@@ -49,12 +56,32 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            if ((updateSource & UpdateType.Antenna) != 0 ||
+                (updateSource & UpdateType.Terminal) != 0 ||
+                (updateSource & UpdateType.Trigger) != 0 ||
+                (updateSource & UpdateType.Script) != 0)
+                commsHandler.HandleMain(argument);
+
             targetTracker.Poll();
         }
 
         public void OnTargetFound(HaE_Entity target)
         {
-            if (target.trackingType != HaE_Entity.TrackingType.Turret)
+            if (status == CurrentStatus.Idle || status == CurrentStatus.Launching)
+            {
+                return;
+            } else if (status == CurrentStatus.TurretGuided)
+            {
+                if (target.trackingType != HaE_Entity.TrackingType.Turret)
+                    return;
+            } else if (status == CurrentStatus.LidarGuided)
+            {
+                if (target.trackingType != HaE_Entity.TrackingType.Lidar)
+                    return;
+            }
+
+            if ((target.entityInfo.Relationship & MyRelationsBetweenPlayerAndBlock.Enemies) == 0 &&
+                (target.entityInfo.Relationship & MyRelationsBetweenPlayerAndBlock.Neutral) == 0)
                 return;
 
             Vector3D reqDir = proNav.Navigate(target);
