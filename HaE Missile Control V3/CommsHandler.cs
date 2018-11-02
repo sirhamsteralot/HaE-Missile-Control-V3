@@ -41,7 +41,7 @@ namespace IngameScript
                 commands[name] = action;
             }
 
-            public void RemoveCOmmand (string name)
+            public void RemoveCommand (string name)
             {
                 commands.Remove(name);
             }

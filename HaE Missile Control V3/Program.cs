@@ -19,10 +19,14 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
+        public string controllerName { get { return (string)nameSerializer.GetValue("controllerName"); } }
+        public string triggerName { get { return (string)nameSerializer.GetValue("triggerName"); } }
+
         EntityTracking_Module targetTracker;
         ControlModule controlModule;
         ProNav proNav;
         CommsHandler commsHandler;
+        INISerializer nameSerializer;
 
         IMyShipController control;
         IMyTimerBlock trigger;
@@ -32,17 +36,43 @@ namespace IngameScript
 
         public Program()
         {
-            commsHandler = new CommsHandler(this);
+            #region serializer
+            nameSerializer = new INISerializer("HaE Missile");
+            nameSerializer.AddValue("controllerName", x => x, "Control");
+            nameSerializer.AddValue("triggerName", x => x, "Trigger");
 
+            if (Me.CustomData == "")
+            {
+                string temp = Me.CustomData;
+                nameSerializer.FirstSerialization(ref temp);
+                Me.CustomData = temp;
+            }
+            else
+            {
+                nameSerializer.DeSerialize(Me.CustomData);
+            }
+            #endregion
+
+            #region fetchblocks
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
-            control = GTS.GetBlockWithNameOnGrid("Control") as IMyShipController;
-            trigger = GTS.GetBlockWithNameOnGrid("Trigger") as IMyTimerBlock;
+            control = GTS.GetBlockWithNameOnGrid(controllerName) as IMyShipController;
+            trigger = GTS.GetBlockWithNameOnGrid(triggerName) as IMyTimerBlock;
+            var antennas = new List<IMyRadioAntenna>();
+            GTS.GetBlocksOfTypeOnGrid(antennas);
+            #endregion
+
+            #region initModules
+            if (antennas.Count > 0)
+                commsHandler = new CommsHandler(this, antennas.First());
+            else
+                commsHandler = new CommsHandler(this, null);
 
             targetTracker = new EntityTracking_Module(GTS, control, null);
             targetTracker.onEntityDetected += OnTargetFound;
 
             controlModule = new ControlModule(GTS, control);
             proNav = new ProNav(control, 30);
+            #endregion
 
             status = CurrentStatus.Idle;
 
@@ -60,7 +90,7 @@ namespace IngameScript
                 (updateSource & UpdateType.Terminal) != 0 ||
                 (updateSource & UpdateType.Trigger) != 0 ||
                 (updateSource & UpdateType.Script) != 0)
-                commsHandler.HandleMain(argument);
+                commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
 
             targetTracker.Poll();
         }
