@@ -23,9 +23,15 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HaE Autopilot Module", "..\
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HaE Timing", "..\..\..\MDK_Projects\Shared Projects\HaE Timing\HaE Timing.shproj", "{36C0DEEB-8ADE-4156-AEA7-9DF3C620F474}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaE Missile Control V3 - Base", "HaE Missile Control V3 - Base\HaE Missile Control V3 - Base.csproj", "{142FE6A1-17AC-4B7A-B599-FB37A4F9E970}"
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		..\..\..\MDK_Projects\Shared Projects\HaE Comms\HaE Comms.projitems*{0563c763-5b65-4a47-8a5b-2176876d7eaf}*SharedItemsImports = 13
+		..\..\..\MDK_Projects\Shared Projects\HaE Comms\HaE Comms.projitems*{142fe6a1-17ac-4b7a-b599-fb37a4f9e970}*SharedItemsImports = 4
+		..\..\..\MDK_Projects\Shared Projects\HaE GridTerminalSystemUtils\HaE GridTerminalSystemUtils.projitems*{142fe6a1-17ac-4b7a-b599-fb37a4f9e970}*SharedItemsImports = 4
+		..\..\..\MDK_Projects\Shared Projects\HaE Scheduler\HaE Scheduler.projitems*{142fe6a1-17ac-4b7a-b599-fb37a4f9e970}*SharedItemsImports = 4
+		..\..\..\MDK_Projects\Shared Projects\HaE Serialization\HaE Serialization.projitems*{142fe6a1-17ac-4b7a-b599-fb37a4f9e970}*SharedItemsImports = 4
 		..\..\..\MDK_Projects\Shared Projects\HaE Targeting\HaE Targeting.projitems*{2c0b9aab-8c08-40ef-a9f4-980dba0e4b11}*SharedItemsImports = 13
 		..\..\..\MDK_Projects\Shared Projects\VectorUtils\VectorUtils.projitems*{2d034700-8c67-41b0-b3c8-5510d21e52c3}*SharedItemsImports = 13
 		..\..\..\MDK_Projects\Shared Projects\HaE Scheduler\HaE Scheduler.projitems*{32a2473a-3095-4b7b-8362-456c72003feb}*SharedItemsImports = 13
@@ -50,6 +56,8 @@ Global
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{6F3100A4-4CC0-4A73-9FFA-DC4CD3A7E95F}.Debug|x64.ActiveCfg = Debug|x64
 		{6F3100A4-4CC0-4A73-9FFA-DC4CD3A7E95F}.Debug|x64.Build.0 = Debug|x64
+		{142FE6A1-17AC-4B7A-B599-FB37A4F9E970}.Debug|x64.ActiveCfg = Debug|x64
+		{142FE6A1-17AC-4B7A-B599-FB37A4F9E970}.Debug|x64.Build.0 = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
