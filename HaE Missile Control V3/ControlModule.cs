@@ -42,6 +42,11 @@ namespace IngameScript
             {
                 ThrustUtils.SetThrustBasedDot(thrusters, dir);
             }
+
+            public void LaunchForward()
+            {
+                ThrustUtils.SetThrustBasedDot(thrusters, control.WorldMatrix.Forward);
+            }
         }
     }
 }

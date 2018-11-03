@@ -19,7 +19,7 @@ namespace IngameScript
 {
     partial class Program
     {
-        public enum CurrentStatus
+        public enum CurrentMode
         {
             Idle,
             Launching,

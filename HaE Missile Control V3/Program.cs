@@ -20,6 +20,7 @@ namespace IngameScript
     partial class Program : MyGridProgram
     {
         public string controllerName { get { return (string)nameSerializer.GetValue("controllerName"); } }
+        public string mergeBlockName { get { return (string)nameSerializer.GetValue("mergeBlockName"); } }
         public string triggerName { get { return (string)nameSerializer.GetValue("triggerName"); } }
 
         EntityTracking_Module targetTracker;
@@ -30,8 +31,11 @@ namespace IngameScript
 
         IMyShipController control;
         IMyTimerBlock trigger;
+        IMyShipMergeBlock mergeBlock;
 
-        CurrentStatus status;
+        CurrentMode mode;
+
+        Scheduler missionScheduler;
 
 
         public Program()
@@ -39,6 +43,7 @@ namespace IngameScript
             #region serializer
             nameSerializer = new INISerializer("HaE Missile");
             nameSerializer.AddValue("controllerName", x => x, "Control");
+            nameSerializer.AddValue("mergeBlockName", x => x, "MergeBlock");
             nameSerializer.AddValue("triggerName", x => x, "Trigger");
 
             if (Me.CustomData == "")
@@ -57,6 +62,8 @@ namespace IngameScript
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
             control = GTS.GetBlockWithNameOnGrid(controllerName) as IMyShipController;
             trigger = GTS.GetBlockWithNameOnGrid(triggerName) as IMyTimerBlock;
+            mergeBlock = GTS.GetBlockWithNameOnGrid(mergeBlockName) as IMyShipMergeBlock;
+
             var antennas = new List<IMyRadioAntenna>();
             GTS.GetBlocksOfTypeOnGrid(antennas);
             #endregion
@@ -67,14 +74,19 @@ namespace IngameScript
             else
                 commsHandler = new CommsHandler(this, null);
 
+            var commands = new Commands(this, commsHandler);
+            commands.RegisterCommands();
+
             targetTracker = new EntityTracking_Module(GTS, control, null);
             targetTracker.onEntityDetected += OnTargetFound;
 
             controlModule = new ControlModule(GTS, control);
             proNav = new ProNav(control, 30);
+
+            missionScheduler = new Scheduler();
             #endregion
 
-            status = CurrentStatus.Idle;
+            mode = CurrentMode.Idle;
 
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
@@ -92,19 +104,20 @@ namespace IngameScript
                 (updateSource & UpdateType.Script) != 0)
                 commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
 
+            missionScheduler.Main();
             targetTracker.Poll();
         }
 
         public void OnTargetFound(HaE_Entity target)
         {
-            if (status == CurrentStatus.Idle || status == CurrentStatus.Launching)
+            if (mode == CurrentMode.Idle || mode == CurrentMode.Launching)
             {
                 return;
-            } else if (status == CurrentStatus.TurretGuided)
+            } else if (mode == CurrentMode.TurretGuided)
             {
                 if (target.trackingType != HaE_Entity.TrackingType.Turret)
                     return;
-            } else if (status == CurrentStatus.LidarGuided)
+            } else if (mode == CurrentMode.LidarGuided)
             {
                 if (target.trackingType != HaE_Entity.TrackingType.Lidar)
                     return;
