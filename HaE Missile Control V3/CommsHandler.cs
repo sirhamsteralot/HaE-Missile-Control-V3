@@ -65,7 +65,6 @@ namespace IngameScript
                 Action<List<string>, long> action;
                 if (commands.TryGetValue(split[0], out action))
                 {
-                    split.RemoveAtFast(0);
                     action?.Invoke(split.ToList(), messageSource);
                 }
             }
