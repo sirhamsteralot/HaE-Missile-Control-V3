@@ -123,8 +123,9 @@ namespace IngameScript
                     return;
             }
 
-            if ((target.entityInfo.Relationship & MyRelationsBetweenPlayerAndBlock.Enemies) == 0 &&
-                (target.entityInfo.Relationship & MyRelationsBetweenPlayerAndBlock.Neutral) == 0)
+            if ((target.entityInfo.Relationship != MyRelationsBetweenPlayerAndBlock.Enemies) &&
+                (target.entityInfo.Relationship != MyRelationsBetweenPlayerAndBlock.Neutral) &&
+                (target.entityInfo.Relationship != MyRelationsBetweenPlayerAndBlock.NoOwnership))
                 return;
 
             Vector3D reqDir = proNav.Navigate(target);
