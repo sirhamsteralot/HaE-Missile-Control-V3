@@ -105,6 +105,11 @@ namespace IngameScript
                 commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
 
             missionScheduler.Main();
+
+            if (mode == CurrentMode.Idle || mode == CurrentMode.Launching)
+                return;
+
+            
             targetTracker.Poll();
         }
 

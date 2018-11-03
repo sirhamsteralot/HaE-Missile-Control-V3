@@ -33,14 +33,47 @@ namespace IngameScript
             public void RegisterCommands()
             {
                 handler.AddCommand("LaunchTurretGuided", LaunchTurretGuided);
+                handler.AddCommand("LaunchGPSGuided", LaunchGPSGuided);
+                handler.AddCommand("RetargetRayCast", RetargetRayCast);
             }
 
             #region commands
             private void LaunchTurretGuided(List<string> args, long source)
             {
-                P.missionScheduler.AddTask(LaunchGuidedTask());
+                P.missionScheduler.AddTask(LaunchTask());
+                P.missionScheduler.AddTask(SwitchToMode(CurrentMode.TurretGuided));
             }
-            private IEnumerator<bool> LaunchGuidedTask()
+
+            private void LaunchGPSGuided(List<string> args, long source)
+            {
+                if (args.Count < 2)
+                    return;
+                Vector3D targetloc;
+                if (!Vector3D.TryParse(args[1], out targetloc))
+                    return;    
+
+                P.missionScheduler.AddTask(LaunchTask());
+
+                P.missionScheduler.AddTask(TargetLocation(targetloc));
+
+                P.missionScheduler.AddTask(SwitchToMode(CurrentMode.GPSGuided));
+            }
+
+            private void RetargetRayCast(List<string> args, long source)
+            {
+                if (args.Count < 2)
+                    return;
+                Vector3D targetloc;
+                if (!Vector3D.TryParse(args[1], out targetloc))
+                    return;
+
+                if (!P.targetTracker.PaintTarget(targetloc).entityInfo.IsEmpty())
+                    P.missionScheduler.AddTask(SwitchToMode(CurrentMode.LidarGuided));
+            }
+            #endregion
+
+            #region helperTasks
+            private IEnumerator<bool> LaunchTask()
             {
                 P.mode = CurrentMode.Launching;
                 if (P.mergeBlock != null)
@@ -49,8 +82,20 @@ namespace IngameScript
 
                 for (int i = 0; i < 60; i++)        //Delay enabling of the turretguidance till a second after launch
                     yield return true;
+            }
+            private IEnumerator<bool> TargetLocation(Vector3D targetLocation)
+            {
+                Vector3D direction = targetLocation - P.control.GetPosition();
+                double distance = direction.Normalize();
+                P.controlModule.LaunchForward();
+                P.controlModule.AimMissile(direction);
+                yield return true;
+            }
 
-                P.mode = CurrentMode.TurretGuided;
+            private IEnumerator<bool> SwitchToMode(CurrentMode mode)
+            {
+                P.mode = mode;
+                yield return true;
             }
             #endregion
         }
