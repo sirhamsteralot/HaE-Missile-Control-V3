@@ -19,11 +19,52 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
+        public string missileTag { get { return (string)nameSerializer.GetValue("missileTag"); } }
 
+        List<Missile> missiles;
+        INISerializer nameSerializer;
+        CommsHandler commsHandler;
 
         public Program()
         {
+            #region serializer
+            nameSerializer = new INISerializer("HaE MissileBase");
+            nameSerializer.AddValue("missileTag", x => x, "[HaE Missile]");
 
+            if (Me.CustomData == "")
+            {
+                string temp = Me.CustomData;
+                nameSerializer.FirstSerialization(ref temp);
+                Me.CustomData = temp;
+            }
+            else
+            {
+                nameSerializer.DeSerialize(Me.CustomData);
+            }
+            #endregion
+
+            #region fetchblocks
+            GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
+            List<IMyProgrammableBlock> tempPbs = new List<IMyProgrammableBlock>();
+            GridTerminalSystem.GetBlocksOfType(tempPbs, x => x.CustomName.Contains(missileTag));
+            missiles = new List<Missile>();
+            foreach (var pb in tempPbs)
+            {
+                missiles.Add(new Missile(pb));
+            }
+            var antennas = new List<IMyRadioAntenna>();
+            GTS.GetBlocksOfTypeOnGrid(antennas);
+            #endregion
+
+            #region initModules
+            if (antennas.Count > 0)
+                commsHandler = new CommsHandler(this, antennas.First());
+            else
+                commsHandler = new CommsHandler(this, null);
+
+            var commands = new Commands(this, commsHandler);
+            commands.RegisterCommands();
+            #endregion
         }
 
         public void Save()
@@ -33,7 +74,7 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-
+            commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
         }
     }
 }

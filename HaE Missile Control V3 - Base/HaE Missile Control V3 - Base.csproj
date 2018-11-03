@@ -96,11 +96,13 @@
     <Analyzer Include="c:\users\sirha\appdata\local\microsoft\visualstudio\15.0_d85c6838\extensions\caa0jahn.l1d\Analyzers\MDKAnalyzer.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Commands.cs" />
     <Compile Include="CommsHandler.cs" />
     <Compile Include="MDK\Bootstrapper.cs" />
     <AdditionalFiles Include="MDK\MDK.options">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AdditionalFiles>
+    <Compile Include="Missile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Readme.cs" />
     <AdditionalFiles Include="thumb.png" />

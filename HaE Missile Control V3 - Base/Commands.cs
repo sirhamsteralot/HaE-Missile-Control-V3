@@ -38,19 +38,11 @@ namespace IngameScript
             #region commands
             private void LaunchTurretGuided(List<string> args, long source)
             {
-                P.missionScheduler.AddTask(LaunchGuidedTask());
-            }
-            private IEnumerator<bool> LaunchGuidedTask()
-            {
-                P.mode = CurrentMode.Launching;
-                if (P.mergeBlock != null)
-                    P.mergeBlock.Enabled = false;
-                P.controlModule.LaunchForward();
-
-                for (int i = 0; i < 60; i++)        //Delay enabling of the turretguidance till a second after launch
-                    yield return true;
-
-                P.mode = CurrentMode.TurretGuided;
+                if (P.missiles.Count > 0)
+                {
+                    P.missiles.First().LaunchMissileTurretGuided();
+                    P.missiles.RemoveAtFast(0);
+                }
             }
             #endregion
         }
