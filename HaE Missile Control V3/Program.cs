@@ -21,7 +21,6 @@ namespace IngameScript
     {
         public string controllerName { get { return (string)nameSerializer.GetValue("controllerName"); } }
         public string mergeBlockName { get { return (string)nameSerializer.GetValue("mergeBlockName"); } }
-        public string triggerName { get { return (string)nameSerializer.GetValue("triggerName"); } }
 
         EntityTracking_Module targetTracker;
         ControlModule controlModule;
@@ -30,7 +29,6 @@ namespace IngameScript
         INISerializer nameSerializer;
 
         IMyShipController control;
-        IMyTimerBlock trigger;
         IMyShipMergeBlock mergeBlock;
 
         CurrentMode mode;
@@ -44,7 +42,6 @@ namespace IngameScript
             nameSerializer = new INISerializer("HaE Missile");
             nameSerializer.AddValue("controllerName", x => x, "Control");
             nameSerializer.AddValue("mergeBlockName", x => x, "MergeBlock");
-            nameSerializer.AddValue("triggerName", x => x, "Trigger");
 
             if (Me.CustomData == "")
             {
@@ -61,7 +58,6 @@ namespace IngameScript
             #region fetchblocks
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
             control = GTS.GetBlockWithNameOnGrid(controllerName) as IMyShipController;
-            trigger = GTS.GetBlockWithNameOnGrid(triggerName) as IMyTimerBlock;
             mergeBlock = GTS.GetBlockWithNameOnGrid(mergeBlockName) as IMyShipMergeBlock;
 
             var antennas = new List<IMyRadioAntenna>();
@@ -139,7 +135,6 @@ namespace IngameScript
             controlModule.AimMissile(reqDir);
 
             controlModule.ApplyThrust(reqDir);
-            trigger?.Trigger();
         }
     }
 }

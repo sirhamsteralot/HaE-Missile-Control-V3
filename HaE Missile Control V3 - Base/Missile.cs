@@ -23,17 +23,21 @@ namespace IngameScript
         {
             public IMyProgrammableBlock missileCore;
             public bool launched;
+            public long Id;
+
+            public bool Alive => !missileCore.IsClosed();
+            public Vector3D CurrentPos => missileCore.GetPosition();
 
             public Missile(IMyProgrammableBlock missileCore)
             {
                 this.missileCore = missileCore;
+                Id = missileCore.EntityId;
             }
 
             public void LaunchMissileTurretGuided()
             {
                 if (missileCore.TryRun("LaunchTurretGuided"))
                     launched = true;
-                
             }
         }
     }

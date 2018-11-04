@@ -20,16 +20,20 @@ namespace IngameScript
     partial class Program : MyGridProgram
     {
         public string missileTag { get { return (string)nameSerializer.GetValue("missileTag"); } }
+        public string siloDoorTag { get { return (string)nameSerializer.GetValue("siloDoorTag"); } }
 
         List<Missile> missiles;
         INISerializer nameSerializer;
         CommsHandler commsHandler;
+        MissileSilos silos;
+        Scheduler launchScheduler;
 
         public Program()
         {
             #region serializer
             nameSerializer = new INISerializer("HaE MissileBase");
             nameSerializer.AddValue("missileTag", x => x, "[HaE Missile]");
+            nameSerializer.AddValue("siloDoorTag", x => x, "[HaE SiloDoor]");
 
             if (Me.CustomData == "")
             {
@@ -64,6 +68,9 @@ namespace IngameScript
 
             var commands = new Commands(this, commsHandler);
             commands.RegisterCommands();
+
+            silos = new MissileSilos(GTS, siloDoorTag);
+            launchScheduler = new Scheduler();
             #endregion
         }
 
@@ -74,6 +81,8 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            launchScheduler.Main();
+
             commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
         }
     }
