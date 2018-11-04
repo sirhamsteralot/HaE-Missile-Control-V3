@@ -45,6 +45,8 @@ namespace IngameScript
             
             public void UpdateStatus()
             {
+                buffer.Clear();
+
                 buffer.AppendLine("HaE MissileControl V3");
                 buffer.AppendLine($"MissileCount: {P.missiles.Count}");
                 buffer.AppendLine($"Silostatus: {P.silos.GetSiloStatus()}");

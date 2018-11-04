@@ -100,6 +100,7 @@ namespace IngameScript
         {
             launchScheduler.Main();
             statusWriter.Main();
+            statusWriter.UpdateStatus();
             commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
         }
     }
