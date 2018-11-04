@@ -99,7 +99,7 @@ namespace IngameScript
         public void Main(string argument, UpdateType updateSource)
         {
             launchScheduler.Main();
-
+            statusWriter.Main();
             commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
         }
     }
