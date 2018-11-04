@@ -38,7 +38,8 @@ namespace IngameScript
             #region commands
             private void LaunchTurretGuided(List<string> args, long source)
             {
-                P.FetchMissiles();
+                if (P.missiles.Count < 1)
+                    P.FetchMissiles();
                 P.launchScheduler.AddTask(P.silos.Open());
                 P.launchScheduler.AddTask(LaunchTurretGuidedSM());
             }
@@ -50,6 +51,7 @@ namespace IngameScript
                 if (P.missiles.Count > 0)
                 {
                     P.missiles.First(x => !x.launched).LaunchMissileTurretGuided();
+                    P.missiles.RemoveAt(0);
                 }
                 yield return false;
             }

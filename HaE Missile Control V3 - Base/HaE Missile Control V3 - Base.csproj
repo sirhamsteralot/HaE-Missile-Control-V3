@@ -108,6 +108,7 @@
     <Compile Include="Readme.cs" />
     <AdditionalFiles Include="thumb.png" />
     <AdditionalFiles Include="MDK\whitelist.cache" />
+    <Compile Include="StatusWriter.cs" />
   </ItemGroup>
   <Import Project="..\..\..\..\MDK_Projects\Shared Projects\HaE Comms\HaE Comms.projitems" Label="Shared" />
   <Import Project="..\..\..\..\MDK_Projects\Shared Projects\HaE Scheduler\HaE Scheduler.projitems" Label="Shared" />

@@ -21,12 +21,14 @@ namespace IngameScript
     {
         public string missileTag { get { return (string)nameSerializer.GetValue("missileTag"); } }
         public string siloDoorTag { get { return (string)nameSerializer.GetValue("siloDoorTag"); } }
+        public string missileStatusLCDTag { get { return (string)nameSerializer.GetValue("missileStatusLCDTag"); } }
 
         List<Missile> missiles;
         INISerializer nameSerializer;
         CommsHandler commsHandler;
         MissileSilos silos;
         Scheduler launchScheduler;
+        StatusWriter statusWriter;
 
         public Program()
         {
@@ -34,6 +36,7 @@ namespace IngameScript
             nameSerializer = new INISerializer("HaE MissileBase");
             nameSerializer.AddValue("missileTag", x => x, "[HaE Missile]");
             nameSerializer.AddValue("siloDoorTag", x => x, "[HaE SiloDoor]");
+            nameSerializer.AddValue("missileStatusLCDTag", x => x, "[HaE MissileStatus]");
 
             if (Me.CustomData == "")
             {
@@ -66,6 +69,10 @@ namespace IngameScript
 
             silos = new MissileSilos(GTS, this, siloDoorTag);
             launchScheduler = new Scheduler();
+
+            var lcds = new List<IMyTextPanel>();
+            GridTerminalSystem.GetBlocksOfType(lcds, x=> x.CustomName.Contains(missileStatusLCDTag));
+            statusWriter = new StatusWriter(this, lcds);
             #endregion
 
             Runtime.UpdateFrequency = UpdateFrequency.Update1;

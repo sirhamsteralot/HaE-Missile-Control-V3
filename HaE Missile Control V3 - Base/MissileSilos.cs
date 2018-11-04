@@ -30,6 +30,14 @@ namespace IngameScript
                 this.P = P;
             }
 
+            public DoorStatus GetSiloStatus()
+            {
+                if (siloDoors.Count > 0)
+                    return siloDoors.First().Status;
+
+                return DoorStatus.Open;
+            }
+
             public IEnumerator<bool> Open()
             {
                 if (siloDoors.Count < 1)
@@ -37,10 +45,20 @@ namespace IngameScript
 
                 P.Echo("Opening!");
 
-                foreach (var door in siloDoors)
+                int amountToRemove = 0;
+                for (int i = 0; i < siloDoors.Count; i++)
                 {
-                    door.OpenDoor();
+                    if (siloDoors[i].IsClosed())
+                    {
+                        siloDoors.Move(i, siloDoors.Count - 1);
+                        amountToRemove++;
+                        continue;
+                    }
+
+                    siloDoors[i].OpenDoor();
                 }
+                siloDoors.RemoveRange(siloDoors.Count - amountToRemove, amountToRemove);
+
 
                 foreach(var door in siloDoors)
                 {
