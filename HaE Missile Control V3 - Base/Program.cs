@@ -77,7 +77,7 @@ namespace IngameScript
             FetchMissiles();
             #endregion
 
-            Runtime.UpdateFrequency = UpdateFrequency.Update1;
+            Runtime.UpdateFrequency = UpdateFrequency.Update1 | UpdateFrequency.Update100;
         }
 
         public void Save()
@@ -100,9 +100,15 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            if ((updateSource & UpdateType.Update100) != 0)
+            {
+                FetchMissiles();
+                statusWriter.UpdateStatus();
+                statusWriter.Main();
+            }
+                
+
             launchScheduler.Main();
-            statusWriter.Main();
-            statusWriter.UpdateStatus();
             commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
         }
     }
