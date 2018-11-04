@@ -34,6 +34,7 @@ namespace IngameScript
         CurrentMode mode;
 
         Scheduler missionScheduler;
+        bool initialized = false;
 
 
         public Program()
@@ -54,7 +55,10 @@ namespace IngameScript
                 nameSerializer.DeSerialize(Me.CustomData);
             }
             #endregion
+        }
 
+        public void Init()
+        {
             #region fetchblocks
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
             control = GTS.GetBlockWithNameOnGrid(controllerName) as IMyShipController;
@@ -84,6 +88,7 @@ namespace IngameScript
 
             mode = CurrentMode.Idle;
 
+            initialized = true;
             Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
 
@@ -98,7 +103,13 @@ namespace IngameScript
                 (updateSource & UpdateType.Terminal) != 0 ||
                 (updateSource & UpdateType.Trigger) != 0 ||
                 (updateSource & UpdateType.Script) != 0)
+            {
+                if (!initialized)
+                    Init();
+
                 commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
+            }
+                
 
             missionScheduler.Main();
 

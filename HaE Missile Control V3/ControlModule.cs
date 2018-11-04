@@ -40,7 +40,7 @@ namespace IngameScript
 
             public void ApplyThrust(Vector3D dir)
             {
-                ThrustUtils.SetThrustBasedDot(thrusters, dir);
+                ThrustUtils.SetThrustBasedDot(thrusters, dir, 2.5);
             }
 
             public void LaunchForward()

@@ -22,16 +22,20 @@ namespace IngameScript
         public class MissileSilos
         {
             List<IMyDoor> siloDoors = new List<IMyDoor>();
+            Program P;
 
-            public MissileSilos(GridTerminalSystemUtils GTS , string SiloDoorTag)
+            public MissileSilos(GridTerminalSystemUtils GTS , Program P, string SiloDoorTag)
             {
                 GTS.GridTerminalSystem.GetBlocksOfType(siloDoors, x => x.CustomName.Contains(SiloDoorTag));
+                this.P = P;
             }
 
             public IEnumerator<bool> Open()
             {
                 if (siloDoors.Count < 1)
                     yield return false;
+
+                P.Echo("Opening!");
 
                 foreach (var door in siloDoors)
                 {
@@ -40,12 +44,14 @@ namespace IngameScript
 
                 foreach(var door in siloDoors)
                 {
-                    if (door.Status == DoorStatus.Open)
-                        continue;
-
-                    while (door.Status == DoorStatus.Opening)
+                    while (door.Status != DoorStatus.Open)
+                    {
+                        P.Echo("Opening...");
                         yield return true;
+                    }
                 }
+
+                P.Echo("Opened!");
             }
 
             public void Close()

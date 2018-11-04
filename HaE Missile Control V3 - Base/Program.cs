@@ -49,13 +49,8 @@ namespace IngameScript
 
             #region fetchblocks
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
-            List<IMyProgrammableBlock> tempPbs = new List<IMyProgrammableBlock>();
-            GridTerminalSystem.GetBlocksOfType(tempPbs, x => x.CustomName.Contains(missileTag));
             missiles = new List<Missile>();
-            foreach (var pb in tempPbs)
-            {
-                missiles.Add(new Missile(pb));
-            }
+            FetchMissiles();
             var antennas = new List<IMyRadioAntenna>();
             GTS.GetBlocksOfTypeOnGrid(antennas);
             #endregion
@@ -69,14 +64,29 @@ namespace IngameScript
             var commands = new Commands(this, commsHandler);
             commands.RegisterCommands();
 
-            silos = new MissileSilos(GTS, siloDoorTag);
+            silos = new MissileSilos(GTS, this, siloDoorTag);
             launchScheduler = new Scheduler();
             #endregion
+
+            Runtime.UpdateFrequency = UpdateFrequency.Update1;
         }
 
         public void Save()
         {
 
+        }
+
+        List<IMyProgrammableBlock> tempPbs = new List<IMyProgrammableBlock>();
+        public void FetchMissiles()
+        {
+            tempPbs.Clear();
+            missiles.Clear();
+            GridTerminalSystem.GetBlocksOfType(tempPbs, x => x.CustomName.Contains(missileTag));
+
+            foreach (var pb in tempPbs)
+            {
+                missiles.Add(new Missile(pb));
+            }
         }
 
         public void Main(string argument, UpdateType updateSource)
