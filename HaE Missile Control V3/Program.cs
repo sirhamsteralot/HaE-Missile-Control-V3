@@ -21,12 +21,14 @@ namespace IngameScript
     {
         public string controllerName { get { return (string)nameSerializer.GetValue("controllerName"); } }
         public string mergeBlockName { get { return (string)nameSerializer.GetValue("mergeBlockName"); } }
+        public double backupDetonationEngageDist { get { return (double)nameSerializer.GetValue("backupDetonationEngageDist"); } }
 
         EntityTracking_Module targetTracker;
         ControlModule controlModule;
         ProNav proNav;
         CommsHandler commsHandler;
         INISerializer nameSerializer;
+        Payload payload;
 
         IMyShipController control;
         IMyShipMergeBlock mergeBlock;
@@ -43,6 +45,7 @@ namespace IngameScript
             nameSerializer = new INISerializer("HaE Missile");
             nameSerializer.AddValue("controllerName", x => x, "Control");
             nameSerializer.AddValue("mergeBlockName", x => x, "MergeBlock");
+            nameSerializer.AddValue("backupDetonationEngageDist", x => double.Parse(x), 100);
 
             if (Me.CustomData == "")
             {
@@ -84,6 +87,8 @@ namespace IngameScript
             proNav = new ProNav(control, 30);
 
             missionScheduler = new Scheduler();
+
+            payload = new Payload(GTS, backupDetonationEngageDist);
             #endregion
 
             mode = CurrentMode.Idle;
@@ -118,6 +123,7 @@ namespace IngameScript
 
             
             targetTracker.Poll();
+            payload.Main();
         }
 
         public void OnTargetFound(HaE_Entity target)
@@ -139,6 +145,9 @@ namespace IngameScript
                 (target.entityInfo.Relationship != MyRelationsBetweenPlayerAndBlock.Neutral) &&
                 (target.entityInfo.Relationship != MyRelationsBetweenPlayerAndBlock.NoOwnership))
                 return;
+
+            double distSq = Vector3D.DistanceSquared(Me.GetPosition(), target.entityInfo.Position);
+            payload.UpdateDist(distSq);
 
             Vector3D reqDir = proNav.Navigate(target);
             double reqMag = reqDir.Normalize();

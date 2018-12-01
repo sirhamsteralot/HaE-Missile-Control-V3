@@ -104,6 +104,7 @@
     <AdditionalFiles Include="MDK\MDK.options">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AdditionalFiles>
+    <Compile Include="Payload.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="ProNav.cs" />
     <Compile Include="Readme.cs" />
