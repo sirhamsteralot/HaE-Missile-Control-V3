@@ -72,8 +72,6 @@ namespace IngameScript
             var lcds = new List<IMyTextPanel>();
             GridTerminalSystem.GetBlocksOfType(lcds, x=> x.CustomName.Contains(missileStatusLCDTag));
             statusWriter = new StatusWriter(this, lcds);
-
-            FetchMissiles();
             #endregion
 
             Runtime.UpdateFrequency = UpdateFrequency.Update1 | UpdateFrequency.Update100;

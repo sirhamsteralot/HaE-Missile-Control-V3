@@ -33,6 +33,8 @@ namespace IngameScript
             public void RegisterCommands()
             {
                 handler.AddCommand("LaunchTurretGuided", LaunchTurretGuided);
+                handler.AddCommand("SendLidarPos", SendLidarPos);
+                handler.AddCommand("Test", SendLidarPosTest);
             }
 
             #region commands
@@ -51,6 +53,24 @@ namespace IngameScript
                     P.missiles.GetMissile(true).LaunchMissileTurretGuided();
                 }
                 yield return false;
+            }
+
+            private void SendLidarPos(List<string> args, long source)
+            {
+                Vector3D pos;
+                if (Vector3D.TryParse(args[1], out pos))
+                {
+                    var missile = P.missiles.GetLaunchedMissile(pos);
+                    missile?.RetargetRayCast(pos);
+                }
+            }
+
+            private void SendLidarPosTest(List<string> args, long source)
+            {
+                Vector3D pos = Vector3D.Zero;
+
+                var missile = P.missiles.GetLaunchedMissile(pos);
+                missile?.RetargetRayCast(pos);
             }
             #endregion
         }

@@ -41,7 +41,7 @@ namespace IngameScript
                     return null;
 
                 launchedMissiles.Sort((x1, x2) => Vector3D.DistanceSquared(x1.CurrentPos, closestTo).CompareTo(Vector3D.DistanceSquared(x2.CurrentPos, closestTo)));
-                return launchedMissiles.First();
+                return launchedMissiles.First(x => x.launched && x.Alive);
             }
 
             public Missile GetMissile(bool launching)

@@ -24,6 +24,7 @@ namespace IngameScript
             public IMyProgrammableBlock missileCore;
             public bool launched;
             public long Id;
+            public MissileStatus status = MissileStatus.Idle;
 
             public bool Alive => !missileCore.IsClosed();
             public Vector3D CurrentPos => missileCore.GetPosition();
@@ -37,7 +38,29 @@ namespace IngameScript
             public void LaunchMissileTurretGuided()
             {
                 if (missileCore.TryRun("LaunchTurretGuided"))
+                {
                     launched = true;
+                    status = MissileStatus.Launched | MissileStatus.TurretGuided;
+                }
+            }
+
+            public void RetargetRayCast(Vector3D pos)
+            {
+                if (missileCore.TryRun("RetargetRayCast|" + pos))
+                {
+                    launched = true;
+
+                    status = MissileStatus.LidarGuided | MissileStatus.Launched;
+                }
+            }
+
+            [Flags]
+            public enum MissileStatus
+            {
+                Idle,
+                Launched,
+                TurretGuided,
+                LidarGuided
             }
         }
     }

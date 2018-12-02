@@ -80,7 +80,8 @@ namespace IngameScript
             var commands = new Commands(this, commsHandler);
             commands.RegisterCommands();
 
-            targetTracker = new EntityTracking_Module(GTS, control, null);
+            EntityTracking_Module.refExpSettings refExp = EntityTracking_Module.refExpSettings.Sensor | EntityTracking_Module.refExpSettings.Turret;
+            targetTracker = new EntityTracking_Module(GTS, control, null, refExp);
             targetTracker.onEntityDetected += OnTargetFound;
 
             controlModule = new ControlModule(GTS, control);

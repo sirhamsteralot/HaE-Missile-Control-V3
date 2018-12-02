@@ -63,10 +63,12 @@ namespace IngameScript
             {
                 if (args.Count < 2)
                     return;
+
                 Vector3D targetloc;
                 if (!Vector3D.TryParse(args[1], out targetloc))
                     return;
 
+                
                 if (!P.targetTracker.PaintTarget(targetloc).entityInfo.IsEmpty())
                     P.missionScheduler.AddTask(SwitchToMode(CurrentMode.LidarGuided));
             }
@@ -80,7 +82,7 @@ namespace IngameScript
                     P.mergeBlock.Enabled = false;
                 P.controlModule.LaunchForward();
 
-                for (int i = 0; i < 60; i++)        //Delay enabling of the turretguidance till a second after launch
+                for (int i = 0; i < 90; i++)        //Delay enabling of the turretguidance till 1.5 seconds after launch
                     yield return true;
             }
             private IEnumerator<bool> TargetLocation(Vector3D targetLocation)
