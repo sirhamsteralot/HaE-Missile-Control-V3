@@ -79,7 +79,7 @@ namespace IngameScript
             {
                 if (distanceSq <= backupDetonateEngageDistSq)
                 {
-                    SetCountDown(2f);
+                    SetCountDown(1f);
                 }
             }
         }

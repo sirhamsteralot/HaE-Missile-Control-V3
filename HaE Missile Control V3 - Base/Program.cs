@@ -23,12 +23,12 @@ namespace IngameScript
         public string siloDoorTag { get { return (string)nameSerializer.GetValue("siloDoorTag"); } }
         public string missileStatusLCDTag { get { return (string)nameSerializer.GetValue("missileStatusLCDTag"); } }
 
-        List<Missile> missiles;
         INISerializer nameSerializer;
         CommsHandler commsHandler;
         MissileSilos silos;
         Scheduler launchScheduler;
         StatusWriter statusWriter;
+        MissileManager missiles;
 
         public Program()
         {
@@ -52,8 +52,7 @@ namespace IngameScript
 
             #region fetchblocks
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
-            missiles = new List<Missile>();
-            FetchMissiles();
+            missiles = new MissileManager(GTS, missileTag);
             var antennas = new List<IMyRadioAntenna>();
             GTS.GetBlocksOfTypeOnGrid(antennas);
             #endregion
@@ -85,24 +84,11 @@ namespace IngameScript
 
         }
 
-        List<IMyProgrammableBlock> tempPbs = new List<IMyProgrammableBlock>();
-        public void FetchMissiles()
-        {
-            tempPbs.Clear();
-            missiles.Clear();
-            GridTerminalSystem.GetBlocksOfType(tempPbs, x => x.CustomName.Contains(missileTag));
-
-            foreach (var pb in tempPbs)
-            {
-                missiles.Add(new Missile(pb));
-            }
-        }
-
         public void Main(string argument, UpdateType updateSource)
         {
             if ((updateSource & UpdateType.Update100) != 0)
             {
-                FetchMissiles();
+                missiles.FetchMissiles();
                 statusWriter.UpdateStatus();
                 statusWriter.Main();
             }

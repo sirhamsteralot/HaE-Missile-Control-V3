@@ -103,6 +103,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AdditionalFiles>
     <Compile Include="Missile.cs" />
+    <Compile Include="MissileManager.cs" />
     <Compile Include="MissileSilos.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Readme.cs" />
