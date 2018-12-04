@@ -23,9 +23,9 @@ namespace IngameScript
         {
             public double NavGain;
 
-            public IMyShipController controller;
+            public ControlModule controller;
 
-            public ProNav(IMyShipController controller, double navGain = 3)
+            public ProNav(ControlModule controller, double navGain = 3)
             {
                 NavGain = navGain;
                 this.controller = controller;
@@ -38,13 +38,25 @@ namespace IngameScript
             /// <returns>Heading we need to aim at</returns>
             public Vector3D Navigate(HaE_Entity target)
             {
-                Vector3D myVel = controller.GetShipVelocities().LinearVelocity;
+                Vector3D myVel = controller.control.GetShipVelocities().LinearVelocity;
 
-                Vector3D rangeVec = target.entityInfo.Position - controller.GetPosition();
+                Vector3D rangeVec = target.entityInfo.Position - controller.control.GetPosition();
                 Vector3D closingVel = target.entityInfo.Velocity - myVel;
 
                 Vector3D accel = CalculateAccel(rangeVec, closingVel);
+                accel += -controller.control.GetNaturalGravity();                              //Gravity term
 
+                double maxForwardAccel = ThrustUtils.GetForwardThrust(controller.thrusters, controller.control);
+                maxForwardAccel /= controller.control.CalculateShipMass().PhysicalMass;
+
+                double forwardAccel = maxForwardAccel;
+                double accelMag = accel.Normalize();
+
+                forwardAccel -= accelMag;
+                forwardAccel = MathHelperD.Clamp(forwardAccel, 0, maxForwardAccel);
+
+                accel *= accelMag;
+                accel += Vector3D.Normalize(rangeVec) * forwardAccel;
                 return accel;
             }
 
@@ -59,8 +71,6 @@ namespace IngameScript
 
                 // Pronav term
                 Vector3D accelerationNormal = (NavGain * closingVelocity).Cross(rotVec);
-                accelerationNormal += -controller.GetNaturalGravity();                              //Gravity term
-                accelerationNormal += Los;                                                          //LosBias term
                 return accelerationNormal;
             }
         }

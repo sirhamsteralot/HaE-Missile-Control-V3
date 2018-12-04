@@ -85,7 +85,7 @@ namespace IngameScript
             targetTracker.onEntityDetected += OnTargetFound;
 
             controlModule = new ControlModule(GTS, control);
-            proNav = new ProNav(control, 30);
+            proNav = new ProNav(controlModule, 30);
 
             missionScheduler = new Scheduler();
 
