@@ -75,18 +75,14 @@ namespace IngameScript
                     siloMissiles.Add(new Missile(pb));
                 }
 
-                int countToRemove = 0;
                 for(int i = 0; i < launchedMissiles.Count; i++)
                 {
                     if (!launchedMissiles[i].Alive)
                     {
-                        launchedMissiles.Move(i, launchedMissiles.Count - 1);
-                        countToRemove++;
+                        launchedMissiles.RemoveAtFast(i);
                         i--;
                     }
                 }
-
-                launchedMissiles.RemoveRange(launchedMissiles.Count - countToRemove, countToRemove);
             }
 
             #region comparer
