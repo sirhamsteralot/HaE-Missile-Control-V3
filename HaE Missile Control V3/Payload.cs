@@ -25,6 +25,7 @@ namespace IngameScript
             List<MyDetectedEntityInfo> detected = new List<MyDetectedEntityInfo>();
             IMySensorBlock sensor;
 
+            double detonationDist = 5f;
             double backupDetonateEngageDistSq;
 
             public Payload(GridTerminalSystemUtils GTS, double backupDetonateEngageDist)
@@ -80,6 +81,11 @@ namespace IngameScript
                 if (distanceSq <= backupDetonateEngageDistSq)
                 {
                     SetCountDown(1f);
+                }
+
+                if (distanceSq <= detonationDist)
+                {
+                    Detonate();
                 }
             }
         }

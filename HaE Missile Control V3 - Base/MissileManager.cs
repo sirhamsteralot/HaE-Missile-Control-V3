@@ -22,6 +22,7 @@ namespace IngameScript
         public class MissileManager
         {
             public int Count => siloMissiles.Count;
+            public int LaunchedCount => launchedMissiles.Count;
 
             private List<Missile> siloMissiles = new List<Missile>();
             private List<Missile> launchedMissiles = new List<Missile>();
@@ -29,10 +30,13 @@ namespace IngameScript
             private GridTerminalSystemUtils GTS;
             private string missileTag;
 
-            public MissileManager(GridTerminalSystemUtils GTS, string missileTag)
+            private Program P;
+
+            public MissileManager(GridTerminalSystemUtils GTS, Program P, string missileTag)
             {
                 this.GTS = GTS;
                 this.missileTag = missileTag;
+                this.P = P;
             }
 
             public Missile GetLaunchedMissile(Vector3D closestTo)
@@ -81,6 +85,7 @@ namespace IngameScript
                     {
                         launchedMissiles.RemoveAtFast(i);
                         i--;
+                        P.statusWriter.LogEvent("Missile Closed!");
                     }
                 }
             }

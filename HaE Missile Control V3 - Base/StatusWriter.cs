@@ -27,19 +27,31 @@ namespace IngameScript
             private Program P;
             private StringBuilder buffer;
             private StringBuilder writeBuffer;
+            private HashSet<string> logEvents;
+
+            Scheduler internalScheduler;
 
             public StatusWriter(Program p, List<IMyTextPanel> lcds)
             {
                 this.lcds = lcds;
                 buffer = new StringBuilder();
                 writeBuffer = new StringBuilder();
+                logEvents = new HashSet<string>();
+                internalScheduler = new Scheduler();
                 P = p;
             }
 
             public void Main()
             {
+                internalScheduler.Main();
+
                 if (update)
                     UpdateLCD();
+            }
+
+            public void LogEvent(string message)
+            {
+                logEvents.Add(message);
             }
 
             
@@ -50,20 +62,37 @@ namespace IngameScript
                 buffer.AppendLine("HaE MissileControl V3");
                 buffer.AppendLine($"MissileCount: {P.missiles.Count}");
                 buffer.AppendLine($"Silostatus: {P.silos.GetSiloStatus()}");
+                buffer.AppendLine($"Launched: {P.missiles.LaunchedCount}");
+                buffer.Append('=', 40).AppendLine();
 
-                if (buffer != writeBuffer)
+                foreach(var logEvent in logEvents)
+                {
+                    buffer.AppendLine(logEvent);
+                }
+                logEvents.Clear();
+
+                if (!buffer.Equals(writeBuffer))
                 {
                     update = true;
-                    writeBuffer = buffer;
+                    writeBuffer.Clear();
+                    writeBuffer.Append(buffer);
                 }
             }
 
             private void UpdateLCD()
             {
-                foreach(var lcd in lcds)
+                if (internalScheduler.QueueCount < 1)
+                    internalScheduler.AddTask(InternalUpdate());
+            }
+
+            private IEnumerator<bool> InternalUpdate()
+            {
+                foreach (var lcd in lcds)
                 {
                     lcd.WritePublicText(writeBuffer.ToString());
+                    yield return true;
                 }
+                update = false;
             }
         }
     }

@@ -52,7 +52,7 @@ namespace IngameScript
 
             #region fetchblocks
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
-            missiles = new MissileManager(GTS, missileTag);
+            missiles = new MissileManager(GTS, this, missileTag);
             var antennas = new List<IMyRadioAntenna>();
             GTS.GetBlocksOfTypeOnGrid(antennas);
             #endregion
@@ -88,10 +88,9 @@ namespace IngameScript
             {
                 missiles.FetchMissiles();
                 statusWriter.UpdateStatus();
-                statusWriter.Main();
             }
-                
 
+            statusWriter.Main();
             launchScheduler.Main();
             commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
         }
