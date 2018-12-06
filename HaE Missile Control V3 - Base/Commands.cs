@@ -58,8 +58,9 @@ namespace IngameScript
             {
                 if (P.entityTrackingModule != null)
                 {
+                    P.entityTrackingModule.ClearEntities();
+
                     P.entityTrackingModule.PaintTarget(P.targetingCastLength);
-                    P.Echo("Locked!");
                 }
                     
             }
