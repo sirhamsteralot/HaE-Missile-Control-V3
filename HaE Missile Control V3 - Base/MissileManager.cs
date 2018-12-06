@@ -39,13 +39,24 @@ namespace IngameScript
                 this.P = P;
             }
 
-            public Missile GetLaunchedMissile(Vector3D closestTo)
+            public Missile GetLaunchedMissile(Vector3D closestTo, Missile.MissileStatus statusFilter)
             {
                 if (launchedMissiles.Count < 1)
                     return null;
 
                 launchedMissiles.Sort((x1, x2) => Vector3D.DistanceSquared(x1.CurrentPos, closestTo).CompareTo(Vector3D.DistanceSquared(x2.CurrentPos, closestTo)));
-                return launchedMissiles.First(x => x.launched && x.Alive);
+
+                Missile missile = null;
+
+                try
+                {
+                    missile = launchedMissiles.First(x => x.launched && x.Alive && (x.status & statusFilter) != 0);
+                } catch (Exception e)
+                {
+                    P.Echo(e.Message + "\n" +e.StackTrace);
+                }
+                
+                return missile;
             }
 
             public Missile GetMissile(bool launching)

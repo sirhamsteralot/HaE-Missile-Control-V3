@@ -7,8 +7,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaE Missile Control V3", "H
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HaE EntityTrackingModule", "..\..\..\MDK_Projects\Shared Projects\EntityTrackingModule\HaE EntityTrackingModule.shproj", "{BFA2687A-1112-44DF-BC64-F0FC7F2A1D32}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HaE Comms", "..\..\..\MDK_Projects\Shared Projects\HaE Comms\HaE Comms.shproj", "{0563C763-5B65-4A47-8A5B-2176876D7EAF}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HaE GridTerminalSystemUtils", "..\..\..\MDK_Projects\Shared Projects\HaE GridTerminalSystemUtils\HaE GridTerminalSystemUtils.shproj", "{EC6DFC99-0769-41FC-96A3-029FBEB3A7A1}"
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "HaE Scheduler", "..\..\..\MDK_Projects\Shared Projects\HaE Scheduler\HaE Scheduler.shproj", "{32A2473A-3095-4B7B-8362-456C72003FEB}"
@@ -27,7 +25,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaE Missile Control V3 - Ba
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\..\..\MDK_Projects\Shared Projects\HaE Comms\HaE Comms.projitems*{0563c763-5b65-4a47-8a5b-2176876d7eaf}*SharedItemsImports = 13
+		..\..\..\MDK_Projects\Shared Projects\EntityTrackingModule\EntityTrackingModule.projitems*{142fe6a1-17ac-4b7a-b599-fb37a4f9e970}*SharedItemsImports = 4
 		..\..\..\MDK_Projects\Shared Projects\HaE Comms\HaE Comms.projitems*{142fe6a1-17ac-4b7a-b599-fb37a4f9e970}*SharedItemsImports = 4
 		..\..\..\MDK_Projects\Shared Projects\HaE GridTerminalSystemUtils\HaE GridTerminalSystemUtils.projitems*{142fe6a1-17ac-4b7a-b599-fb37a4f9e970}*SharedItemsImports = 4
 		..\..\..\MDK_Projects\Shared Projects\HaE Scheduler\HaE Scheduler.projitems*{142fe6a1-17ac-4b7a-b599-fb37a4f9e970}*SharedItemsImports = 4

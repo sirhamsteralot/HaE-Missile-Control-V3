@@ -34,7 +34,8 @@ namespace IngameScript
             {
                 handler.AddCommand("LaunchTurretGuided", LaunchTurretGuided);
                 handler.AddCommand("SendLidarPos", SendLidarPos);
-                handler.AddCommand("Test", SendLidarPosTest);
+                handler.AddCommand("AquireLidarLock", AquireLidarLock);
+                handler.AddCommand("SendLidarData", SendLidarData);
             }
 
             #region commands
@@ -46,8 +47,6 @@ namespace IngameScript
 
             private IEnumerator<bool> LaunchTurretGuidedSM()
             {
-                P.Echo($"missilecount: {P.missiles.Count}");
-
                 if (P.missiles.Count > 0)
                 {
                     P.missiles.GetMissile(true).LaunchMissileTurretGuided();
@@ -55,22 +54,34 @@ namespace IngameScript
                 yield return false;
             }
 
+            private void AquireLidarLock(List<string> args, long source)
+            {
+                if (P.entityTrackingModule != null)
+                {
+                    P.entityTrackingModule.PaintTarget(P.targetingCastLength);
+                    P.Echo("Locked!");
+                }
+                    
+            }
+
             private void SendLidarPos(List<string> args, long source)
             {
                 Vector3D pos;
                 if (Vector3D.TryParse(args[1], out pos))
                 {
-                    var missile = P.missiles.GetLaunchedMissile(pos);
+                    var missile = P.missiles.GetLaunchedMissile(pos, Missile.MissileStatus.Launched);
                     missile?.RetargetRayCast(pos);
                 }
             }
 
-            private void SendLidarPosTest(List<string> args, long source)
+            private void SendLidarData(List<string> args, long source)
             {
-                Vector3D pos = Vector3D.Zero;
-
-                var missile = P.missiles.GetLaunchedMissile(pos);
-                missile?.RetargetRayCast(pos);
+                P.waitForNextLock += WaitForNextLock;
+            }
+            private void WaitForNextLock(HaE_Entity entity)
+            {
+                var missile = P.missiles.GetLaunchedMissile(entity.entityInfo.Position, Missile.MissileStatus.Launched);
+                missile?.RetargetRayCast(entity.entityInfo.Position);
             }
             #endregion
         }
