@@ -129,6 +129,8 @@ namespace IngameScript
 
         public void OnTargetFound(HaE_Entity target)
         {
+            Vector3D targetPos = target.entityInfo.Position;
+
             if (mode == CurrentMode.Idle || mode == CurrentMode.Launching)
             {
                 return;
@@ -140,6 +142,9 @@ namespace IngameScript
             {
                 if (target.trackingType != HaE_Entity.TrackingType.Lidar)
                     return;
+
+                if (target.entityInfo.HitPosition.HasValue)
+                    targetPos = target.entityInfo.HitPosition.Value;
             }
 
             if ((target.entityInfo.Relationship != MyRelationsBetweenPlayerAndBlock.Enemies) &&
@@ -147,7 +152,7 @@ namespace IngameScript
                 (target.entityInfo.Relationship != MyRelationsBetweenPlayerAndBlock.NoOwnership))
                 return;
 
-            double distSq = Vector3D.DistanceSquared(Me.GetPosition(), target.entityInfo.Position);
+            double distSq = Vector3D.DistanceSquared(Me.GetPosition(), targetPos);
             payload.UpdateDist(distSq);
 
             Vector3D reqDir = proNav.Navigate(target);

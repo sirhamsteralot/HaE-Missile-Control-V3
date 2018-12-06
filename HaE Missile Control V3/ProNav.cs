@@ -38,9 +38,13 @@ namespace IngameScript
             /// <returns>Heading we need to aim at</returns>
             public Vector3D Navigate(HaE_Entity target)
             {
+                Vector3D targetpos = target.entityInfo.Position;
+                if (target.entityInfo.HitPosition.HasValue)
+                    targetpos = target.entityInfo.HitPosition.Value;
+
                 Vector3D myVel = controller.control.GetShipVelocities().LinearVelocity;
 
-                Vector3D rangeVec = target.entityInfo.Position - controller.control.GetPosition();
+                Vector3D rangeVec = targetpos - controller.control.GetPosition();
                 Vector3D closingVel = target.entityInfo.Velocity - myVel;
 
                 Vector3D accel = CalculateAccel(rangeVec, closingVel);
