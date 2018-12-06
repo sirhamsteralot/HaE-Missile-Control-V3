@@ -47,8 +47,15 @@ namespace IngameScript
             {
                 foreach (var warhead in warheads)
                 {
-                    warhead.IsArmed = true;
                     warhead.Detonate();
+                }
+            }
+
+            public void Arm()
+            {
+                foreach (var warhead in warheads)
+                {
+                    warhead.IsArmed = true;
                 }
             }
 
@@ -83,7 +90,12 @@ namespace IngameScript
                     SetCountDown(1f);
                 }
 
-                if (distanceSq <= detonationDist)
+                if (distanceSq <= backupDetonateEngageDistSq / 2 )
+                {
+                    Arm();
+                }
+
+                if (distanceSq <= detonationDist * detonationDist)
                 {
                     Detonate();
                 }
