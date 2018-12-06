@@ -69,7 +69,7 @@ namespace IngameScript
                 Vector3D pos;
                 if (Vector3D.TryParse(args[1], out pos))
                 {
-                    var missile = P.missiles.GetLaunchedMissile(pos, Missile.MissileStatus.Launched);
+                    var missile = P.missiles.GetLaunchedMissile(pos);
                     missile?.RetargetRayCast(pos);
                 }
             }
@@ -80,7 +80,7 @@ namespace IngameScript
             }
             private void WaitForNextLock(HaE_Entity entity)
             {
-                var missile = P.missiles.GetLaunchedMissile(entity.entityInfo.Position, Missile.MissileStatus.Launched);
+                var missile = P.missiles.GetLaunchedMissile(entity.entityInfo.Position);
                 missile?.RetargetRayCast(entity.entityInfo.Position);
             }
             #endregion

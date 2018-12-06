@@ -28,6 +28,7 @@ namespace IngameScript
 
             public bool Alive => !missileCore.IsClosed();
             public Vector3D CurrentPos => missileCore.GetPosition();
+            public bool raycastActive = false;
 
             public Missile(IMyProgrammableBlock missileCore)
             {
@@ -49,6 +50,7 @@ namespace IngameScript
                 if (missileCore.TryRun("RetargetRayCast|" + pos))
                 {
                     launched = true;
+                    raycastActive = true;
 
                     status = MissileStatus.LidarGuided | MissileStatus.Launched;
                 }
