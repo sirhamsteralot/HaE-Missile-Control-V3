@@ -115,7 +115,11 @@ namespace IngameScript
 
                 commsHandler.HandleMain(argument, (updateSource & UpdateType.Antenna) != 0);
             }
-                
+            
+            if ((updateSource & UpdateType.Update100) != 0)
+            {
+                targetTracker.TimeoutEntities(TimeSpan.FromSeconds(5));
+            }
 
             missionScheduler.Main();
 

@@ -129,6 +129,7 @@ namespace IngameScript
             {
                 missiles.FetchMissiles();
                 statusWriter.UpdateStatus();
+                entityTrackingModule.TimeoutEntities(TimeSpan.FromSeconds(5));
             }
 
             entityTrackingModule?.Poll();
