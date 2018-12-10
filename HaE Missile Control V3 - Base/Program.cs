@@ -38,9 +38,17 @@ namespace IngameScript
         EntityTracking_Module entityTrackingModule;
 
         Action<HaE_Entity> waitForNextLock = null;
+        private bool initialized = false;
 
 
         public Program()
+        {
+            launchScheduler = new Scheduler();
+            launchScheduler.AddTask(ProgramInit());
+            Runtime.UpdateFrequency = UpdateFrequency.Update1 | UpdateFrequency.Update100;
+        }
+
+        public IEnumerator<bool> ProgramInit()
         {
             #region serializer
             nameSerializer = new INISerializer("HaE MissileBase");
@@ -62,17 +70,22 @@ namespace IngameScript
             {
                 nameSerializer.DeSerialize(Me.CustomData);
             }
+
+            yield return true;
             #endregion
 
             #region fetchblocks
             GridTerminalSystemUtils GTS = new GridTerminalSystemUtils(Me, GridTerminalSystem);
             missiles = new MissileManager(GTS, this, missileTag);
+            yield return true;
 
             var antennas = new List<IMyRadioAntenna>();
             GTS.GetBlocksOfTypeOnGrid(antennas);
+            yield return true;
 
             var camera = GridTerminalSystem.GetBlockWithName(targetingCameraName) as IMyCameraBlock;
             var controller = GridTerminalSystem.GetBlockWithName(controllername) as IMyShipController;
+            yield return true;
             #endregion
 
             #region initModules
@@ -85,12 +98,10 @@ namespace IngameScript
             commands.RegisterCommands();
 
             silos = new MissileSilos(GTS, this, siloDoorTag);
-            launchScheduler = new Scheduler();
+            yield return true;
 
             if (camera != null && controller != null)
             {
-                
-
                 entityTrackingModule = new EntityTracking_Module(GTS, controller, camera, IgnoreTag);
 
                 ITracking cameraTracker = null;
@@ -108,14 +119,15 @@ namespace IngameScript
             {
                 Echo($"camera: {camera != null}\ncontroller: {controller != null}");
             }
-            
+
+            yield return true;
 
             var lcds = new List<IMyTextPanel>();
             GridTerminalSystem.GetBlocksOfType(lcds, x=> x.CustomName.Contains(missileStatusLCDTag));
             statusWriter = new StatusWriter(this, lcds);
             #endregion
 
-            Runtime.UpdateFrequency = UpdateFrequency.Update1 | UpdateFrequency.Update100;
+            initialized = true;
         }
 
         public void Save()
@@ -125,6 +137,12 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            if (!initialized)
+            {
+                launchScheduler.Main();
+                return;
+            }
+
             if ((updateSource & UpdateType.Update100) != 0)
             {
                 missiles.FetchMissiles();
